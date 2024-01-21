@@ -1,4 +1,4 @@
-FROM gitpod/workspace-base:2023-09-17-06-15-08 as installer
+FROM gitpod/workspace-base:2024-01-20-13-44-18 as installer
 
 ENV BAZEL_VERSION=6.3.2
 
@@ -18,7 +18,7 @@ RUN mkdir -p /opt/bazel/bash_complation.d \
     && cp /etc/bash_completion.d/bazel /opt/bazel/bash_complation.d/bazel.${BAZEL_VERSION}
 #   Uninstall bazel and make a symbolic link to the complation file
 
-FROM gitpod/workspace-base:2023-09-17-06-15-08
+FROM gitpod/workspace-base:2024-01-20-13-44-18
 
 ENV BAZELISK_VERSION=1.18.0
 ENV BAZEL_VERSION=6.3.2
