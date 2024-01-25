@@ -1,0 +1,25 @@
+load("//rules/docker/private:rules_docker.bzl", "docker_toolchain")
+
+# toolchain_type for Docker command
+toolchain_type(
+    name = "toolchain_type",
+)
+
+docker_toolchain(
+    name = "docker_linux",
+    command_path = "/usr/bin/docker",
+)
+
+toolchain(
+    name = "docker_linux_toolchain",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    toolchain = ":docker_linux",
+    toolchain_type = ":toolchain_type",
+)

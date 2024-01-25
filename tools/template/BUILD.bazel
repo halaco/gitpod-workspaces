@@ -1,0 +1,45 @@
+load("@pip//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+py_binary(
+    name = "template",
+    srcs = [
+        "template.py",
+    ],
+    main = "template.py",
+    deps = [
+        ":template_lib",
+        requirement("pystache"),
+    ],
+    visibility = [
+        "//visibility:public",
+    ],
+)
+
+py_library(
+    name = "template_lib",
+    imports = ["."],
+    srcs = [
+        "template_lib.py",
+    ],
+    deps = [   
+            requirement("pystache"),
+    ], 
+)
+
+py_test(
+    name = "template_test",
+    srcs = [
+        "template_test.py",
+    ],
+    main = "template_test.py",
+    deps = [
+        ":template_lib",
+    ], 
+    data = [
+        "dockerfile.mustache",
+        "values.json",
+        "dockerfile.golden",       
+    ],
+    size = "small",
+)
