@@ -5,7 +5,8 @@ CURRENT_BAZEL_VERSION ="6.3.2"
 BAZEL_VERSIONS = [
     "6.3.2",
     "6.4.0",
-    "7.0.0",
+    "6.5.0",
+    "7.0.1",
 ]
 
 BAZELISK_VERSION = "1.19.0"

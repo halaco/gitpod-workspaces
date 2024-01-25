@@ -35,7 +35,6 @@ DockerfileInfo = provider(
 def _docker_template_impl(ctx):
     dockerfile = ctx.outputs.docker_path
     values_json = json.encode(ctx.attr.values)
-    print(values_json)
     
     json_file = ctx.actions.declare_file(paths.join(ctx.attr.prefix, ctx.label.name + ".json"))
     ctx.actions.write(json_file, values_json)
@@ -45,12 +44,12 @@ def _docker_template_impl(ctx):
     args.add(json_file)
     args.add(dockerfile)
 
-    # TODO: Implement template command.
     ctx.actions.run(
         outputs = [dockerfile],
         inputs = [ctx.files.template[0], json_file],
         arguments = [args],
         executable = ctx.executable._template_engine,
+        mnemonic = "DockerTemplate",
     )
 
     return [
@@ -94,15 +93,6 @@ DockerImageInfo = provider(
 def _docker_image_impl(ctx):
     toolchain = ctx.toolchains["//rules/docker:toolchain_type"].dockerinfo
 
-    print(toolchain.command_path)
-    print(ctx.attr.image_tags)
-    print(ctx.file.dockerfile.path)
-    
-    print(ctx.file.dockerfile.dirname)
-    print(ctx.attr.dockerfile[DockerfileInfo].prefix)
-    print("---------------------------")
-    print(ctx.build_file_path)
-
     prefix = ctx.attr.dockerfile[DockerfileInfo].prefix
 
     output = ctx.actions.declare_file(prefix + "_done")
@@ -116,12 +106,7 @@ def _docker_image_impl(ctx):
         args.add(tag)
     args.add(ctx.file.dockerfile.dirname)
 
-    print(args)
-
-    print("=============================")
     # Execute docker build command with the given Dockefile
-    # Make working directory and make a symlink to the generate dockerfile
-    # build a docker image.
     ctx.actions.run(
         outputs = [output],
         inputs = [ctx.file.dockerfile],
@@ -159,9 +144,8 @@ docker_image = rule(
 def _docker_push_impl(ctx):
     toolchain = ctx.toolchains["//rules/docker:toolchain_type"].dockerinfo
 
-    print(toolchain.command_path)
+    # Generate a shell script that push all tags to dockerhub.
 
-    print(ctx.attr.deps)
     tags = []
     success_files = []
     for dep in ctx.attr.deps:
@@ -170,17 +154,11 @@ def _docker_push_impl(ctx):
             print(f.path)
         success_files.extend(dep[DefaultInfo].files.to_list())
 
-    print(tags)
-
     script = ["#!/bin/bash"]
     for tag in tags:
         script.append(toolchain.command_path + " push " + tag)
 
-    print(script)
-
     ctx.actions.write(ctx.outputs.push_sh, "\n".join(script), is_executable=True)
-
-    # Generate a shell script that push all tags to dockerhub.
 
     return [
         DefaultInfo(
@@ -236,7 +214,6 @@ def docker_images(name, workspace_name, tag_base, workspace_version, docker_file
 
         if version == current_bazel_vesrion:
             tags.append(tag_base + ":latest")
-        print(tags)
 
         image_step_name = name + ".image." + version 
 

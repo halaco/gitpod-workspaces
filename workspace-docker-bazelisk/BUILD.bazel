@@ -4,7 +4,7 @@ load("//:versions.bzl", "GITPOD_WORKSPACE_VERSION", "CURRENT_BAZEL_VERSION", "BA
 docker_images(
     name = "workspace-docker-bazelisk",
     workspace_name = "gitpod/workspace-base",
-    tag_base = "halaco/gitpod-workspace-docker-bazelisk-exp",
+    tag_base = "halaco/gitpod-workspace-docker-bazelisk",
     workspace_version = GITPOD_WORKSPACE_VERSION,
     docker_file_template = "Dockerfile.mustache",
     current_bazel_vesrion = CURRENT_BAZEL_VERSION,
