@@ -1,0 +1,5 @@
+load(":version_group_test.bzl", "version_group_test_suite")
+
+exports_files(["wrapper.sh"])
+
+version_group_test_suite()

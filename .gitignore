@@ -1,0 +1,5 @@
+bazel-bin
+bazel-gitpod-workspaces
+bazel-out
+bazel-testlogs
+.bazelrc.local

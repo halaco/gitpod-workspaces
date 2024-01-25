@@ -1,0 +1,6 @@
+{
+    "bazel_version":"6.3.2",
+    "bazelisk_version":"1.18.0",
+    "workspace":"gitpod/workspace-base",
+    "workspace_version":"2024-01-20-13-44-18"
+}
