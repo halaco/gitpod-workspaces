@@ -35,7 +35,7 @@ DockerfileInfo = provider(
 def _docker_template_impl(ctx):
     dockerfile = ctx.outputs.docker_path
     values_json = json.encode(ctx.attr.values)
-    
+
     json_file = ctx.actions.declare_file(paths.join(ctx.attr.prefix, ctx.label.name + ".json"))
     ctx.actions.write(json_file, values_json)
 
