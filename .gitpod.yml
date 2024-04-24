@@ -1,1 +1,6 @@
-image: halaco/gitpod-workspace-docker-bazelisk:latest
+image: halaco/gitpod-workspace-docker-bazelisk:bazel.7.0-latest
+vscode:
+  extensions:
+    - bazelbuild.vscode-bazel
+    - streetsidesoftware.code-spell-checker
+    - ms-azuretools.vscode-docker
