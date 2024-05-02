@@ -1,23 +1,38 @@
-FROM gitpod/workspace-base:{{workspace_version}} as installer
+#
+# Install bash complation for Bazel
+#
+FROM debian:bullseye-slim as bazel_builder
 
 ENV BAZEL_VERSION={{bazel_version}}
 
 USER root
 
-#
-# Install bash complation for Bazel
-#
+RUN apt update \
+    && apt install -y curl
+
 #   Add a bazel repository to install bazel and install bazel
-RUN curl -fsSL https://bazel.build/bazel-release.pub.gpg | sudo apt-key add - \
-    && add-apt-repository "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" \
+RUN install -m 0755 -d /usr/local/share/keyrings \
+    && curl -fsSL https://bazel.build/bazel-release.pub.gpg -o /usr/local/share/keyrings/bazel-release.pub.asc \
+    && chmod a+r /usr/local/share/keyrings/bazel-release.pub.asc \
+    && echo "deb [arch=amd64 signed-by=/usr/local/share/keyrings/bazel-release.pub.asc] https://storage.googleapis.com/bazel-apt stable jdk1.8" > /etc/apt/sources.list.d/bazel-release.list \
     && apt update \
     && apt-get install -y bazel=${BAZEL_VERSION}
 #   Copy the bash complation file under /opt/bazel/bash_complation.d
 RUN mkdir -p /opt/bazel/bash_complation.d \
     && chmod 0755 /opt/bazel/bash_complation.d \
     && cp /etc/bash_completion.d/bazel /opt/bazel/bash_complation.d/bazel.${BAZEL_VERSION}
-#   Uninstall bazel and make a symbolic link to the complation file
 
+#
+# Build and install buildifier
+#
+FROM golang:1.22.2-alpine as buildifier_builder
+
+# build and install buildifier
+RUN go install github.com/bazelbuild/buildtools/buildifier@latest
+
+#
+# Build the actual image
+#
 FROM {{workspace}}:{{workspace_version}}
 
 ENV BAZELISK_VERSION={{bazelisk_version}}
@@ -25,7 +40,8 @@ ENV BAZEL_VERSION={{bazel_version}}
 
 USER root
 
-COPY --from=installer /opt/bazel/bash_complation.d/bazel.${BAZEL_VERSION} /opt/bazel/bash_complation.d/bazel.${BAZEL_VERSION}
+COPY --from=buildifier_builder /go/bin/buildifier /usr/bin/buildifier
+COPY --from=bazel_builder /opt/bazel/bash_complation.d/bazel.${BAZEL_VERSION} /opt/bazel/bash_complation.d/bazel.${BAZEL_VERSION}
 RUN ln -s /opt/bazel/bash_complation.d/bazel.${BAZEL_VERSION} /etc/bash_completion.d/bazel
 #
 # Install bazelisk

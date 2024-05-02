@@ -8,11 +8,13 @@ ENV BAZEL_VERSION={{bazel_version}}
 USER root
 
 RUN apt update \
-    && apt install -y software-properties-common curl gnupg
+    && apt install -y curl
 
 #   Add a bazel repository to install bazel and install bazel
-RUN curl -fsSL https://bazel.build/bazel-release.pub.gpg | apt-key add - \
-    && add-apt-repository "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" \
+RUN install -m 0755 -d /usr/local/share/keyrings \
+    && curl -fsSL https://bazel.build/bazel-release.pub.gpg -o /usr/local/share/keyrings/bazel-release.pub.asc \
+    && chmod a+r /usr/local/share/keyrings/bazel-release.pub.asc \
+    && echo "deb [arch=amd64 signed-by=/usr/local/share/keyrings/bazel-release.pub.asc] https://storage.googleapis.com/bazel-apt stable jdk1.8" > /etc/apt/sources.list.d/bazel-release.list \
     && apt update \
     && apt-get install -y bazel=${BAZEL_VERSION}
 #   Copy the bash complation file under /opt/bazel/bash_complation.d
@@ -26,8 +28,7 @@ RUN mkdir -p /opt/bazel/bash_complation.d \
 FROM golang:1.22.2-alpine as buildifier_builder
 
 # build and install buildifier
-RUN go install github.com/bazelbuild/buildtools/buildifier@latest \
-    && which buildifier
+RUN go install github.com/bazelbuild/buildtools/buildifier@latest
 
 #
 # Build the actual image
@@ -39,11 +40,10 @@ ENV BAZEL_VERSION={{bazel_version}}
 
 USER root
 
+COPY --from=buildifier_builder /go/bin/buildifier /usr/bin/buildifier
 COPY --from=bazel_builder /opt/bazel/bash_complation.d/bazel.${BAZEL_VERSION} /opt/bazel/bash_complation.d/bazel.${BAZEL_VERSION}
 RUN ln -s /opt/bazel/bash_complation.d/bazel.${BAZEL_VERSION} /etc/bash_completion.d/bazel
 
 # Install bazelisk
 RUN curl -sSL https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_VERSION}/bazelisk-linux-amd64 -o /usr/bin/bazel \
     && chmod a+x /usr/bin/bazel
-
-COPY --from=buildifier_builder /go/bin/buildifier /usr/bin/buildifier
