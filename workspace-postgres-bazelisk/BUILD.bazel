@@ -1,6 +1,10 @@
 load("//rules/docker:defs.bzl", "docker_images")
 load("//rules/docker/private:rules_docker.bzl", "docker_template")
-load("//:versions.bzl", "GITPOD_WORKSPACE_VERSION", "CURRENT_BAZEL_VERSION", "BAZEL_VERSIONS", "BAZELISK_VERSION")
+load("//:versions.bzl", "CURRENT_BAZEL_VERSION", "BAZEL_VERSIONS", "BAZELISK_VERSION")
+
+# As of 2024/08/28, the latest version of gitpod/workspace-postgres not found.
+# Fit the worspace version to the last exist version.
+GITPOD_WORKSPACE_VERSION = "2024-07-14-17-19-51"
 
 docker_images(
     name = "workspace-postgres-bazelisk",
