@@ -20,9 +20,9 @@ def compare_version(version_a, version_b):
         diff = int(part_b) - int(part_a)
         if diff != 0:
             return diff
-        
+
     return 0
-    
+
 
 def sort_versions(versions):
     sorted = []

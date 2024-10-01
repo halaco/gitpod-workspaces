@@ -10,22 +10,24 @@ def compare_files(file1, file2):
 
     # Compare the length first to quickly catch different sized files
     if len(f1_lines) != len(f2_lines):
+        print(len(f1_lines))
+        print(len(f2_lines))
         return False
 
     # Compare line by line
     for line1, line2 in zip(f1_lines, f2_lines):
         if line1 != line2:
-            print(line1)
-            print(line2)
+            print(f"'{line1}'")
+            print(f"'{line2}'")
             return False
- 
+
     return True
 
 
 class TemplateTest(unittest.TestCase):
 
     def test_expand_template(self):
-        template = "tools/template/dockerfile.mustache"
+        template = "tools/template/dockerfile.jinja"
         values = "tools/template/values.json"
         output = "tools/template/dockerfile"
         golden = "tools/template/dockerfile.golden"

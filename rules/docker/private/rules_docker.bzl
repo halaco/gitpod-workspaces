@@ -66,7 +66,7 @@ docker_template = rule(
     implementation = _docker_template_impl,
     attrs = {
         "template": attr.label(
-            allow_files = [".mustache"],
+            allow_files = [".jinja"],
         ),
         "values": attr.string_dict(),
         "dockerfile": attr.string(),
