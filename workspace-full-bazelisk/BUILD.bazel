@@ -1,12 +1,12 @@
 load("//rules/docker:defs.bzl", "docker_images")
-load("//:versions.bzl", "GITPOD_WORKSPACE_VERSION", "CURRENT_BAZEL_VERSION", "BAZEL_VERSIONS", "BAZELISK_VERSION")
+load("//:versions.bzl", "GITPOD_WORKSPACE_TAG", "CURRENT_BAZEL_VERSION", "BAZEL_VERSIONS", "BAZELISK_VERSION")
 
 docker_images(
     name = "workspace-full-bazelisk",
     workspace_name = "gitpod/workspace-full",
     tag_base = "halaco/gitpod-workspace-full-bazelisk",
-    workspace_version = GITPOD_WORKSPACE_VERSION,
-    docker_file_template = "Dockerfile.mustache",
+    workspace_version = GITPOD_WORKSPACE_TAG,
+    docker_file_template = "Dockerfile.jinja",
     current_bazel_vesrion = CURRENT_BAZEL_VERSION,
     bazel_versions = BAZEL_VERSIONS,
     bazelisk_vesion = BAZELISK_VERSION,

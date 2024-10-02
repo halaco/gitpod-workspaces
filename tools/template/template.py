@@ -3,8 +3,8 @@ import argparse
 from tools.template.template_lib import expand_template
 
 parser = argparse.ArgumentParser()
-parser.add_argument('template')  
-parser.add_argument('json')  
+parser.add_argument('template')
+parser.add_argument('json')
 parser.add_argument('output')
 args = parser.parse_args()
 
